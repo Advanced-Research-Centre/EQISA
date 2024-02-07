@@ -153,7 +153,7 @@ class SolovayKitaevDecomposition():
 
         out.global_phase = decomposition.global_phase - global_phase
 
-        return out, gateset_list, self.gateset_basic, self.find_best_approx
+        return out, gateset_list, self.find_best_approx #, self.gateset_basic,
 
 
     def _recurse(self, sequence: GateSequence, n: int, check_input: bool = True) -> GateSequence:

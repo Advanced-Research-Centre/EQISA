@@ -1,7 +1,7 @@
 import huffman
 import math
 
-def huffman_v0(gateset_list: dict):
+def huffman_v1(gateset_list: dict):
     # cbits = math.ceil(math.log2(len(gateset_list)))
     # # print(cbits)
     # numbits = 0
