@@ -15,13 +15,17 @@
 # Custom-designed Solovay-Kitaev Decomposition method inspired from qiskit.synthesis.discrete_basis.solovay_kitaev
 # Also, uses other qiskit dependencies and the custom_basis that is also designed for the same project
 ########################################################################################################################
-
+## UTILITIES
 from __future__ import annotations
 import numpy as np
 
+## QISKIT DEPENDENCIES
 from qiskit.circuit.gate import Gate
 from qiskit.synthesis.discrete_basis.gate_sequence import GateSequence
-from qiskit.synthesis.discrete_basis.commutator_decompose import commutator_decompose
+# from qiskit.synthesis.discrete_basis.commutator_decompose import commutator_decompose
+
+## DEPENDENCIES FROM FILE
+from gc_decompose import commutator_decompose
 from custom_basis import generate_basic_approximations, _1q_gates, _1q_inverses
 
 
@@ -132,11 +136,11 @@ class SolovayKitaevDecomposition():
 
 ########################################################################################################################
         arr = decomposition.labels
-
+        # gateset_list: dictionary containing the frequencies of gates in the circuit
         gateset_list = {}
         for gate in _1q_gates.keys():
             gateset_list[gate] = 0
-
+        # update entries of the dictionary gateset_list
         for gate in arr:
             if gate in gateset_list:
                 gateset_list[gate] += 1
@@ -176,6 +180,7 @@ class SolovayKitaevDecomposition():
 
         if n == 0:
             self.find_best_approx.append(self.find_basic_approximation(sequence))
+            # print("basic_approx gate sequence: ", self.find_basic_approximation(sequence).labels)
             return self.find_basic_approximation(sequence)
 
         u_n1 = self._recurse(sequence, n - 1, check_input=check_input)

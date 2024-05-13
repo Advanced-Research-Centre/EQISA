@@ -6,7 +6,6 @@ from custom_basis import _1q_gates, _1q_inverses
 
 
 class Helper():
-
     def __int__(self, basis_dict, arr, recur) -> None:
         self.dictionary = basis_dict
         self.simpledict, self.indices = self.prepare_dicts(basis_dict)
@@ -61,7 +60,7 @@ class Helper():
                     if self.matrixCompare(self.simpledict[i].product, temp_seq.product):
                         self.dictionary[str(self.simpledict[i].labels)] += counting_arr[index] / 2
                 # self.dictionary[str(temp_seq.labels)] += counting_arr[index] / 2
-        print("find_basic_dictionary :", self.dictionary)
+        # print("find_basic_dictionary :", self.dictionary)
         depth = 0
         for key in self.dictionary.keys():
             modifkey = ast.literal_eval(key)
@@ -140,9 +139,11 @@ class Helper():
                         flat[i] = self.indices[str(self.simpledict[index].labels)]
                 # flat[i] = self.indices[str(self._remove_self_inverses(self.simpledict[string].adjoint()).labels)]
 
+        instruction_stream_indexed = []
         instruction_stream = []
         for item in reversed(flat):
-            instruction_stream.append(self.indices[item])
+            if self.indices[item] != '[]':
+                instruction_stream_indexed.append(self.indices[item])
 
         # for item in reversed(flat):
         #     for gate in self.simpledict[self.indices[item]]:
@@ -150,7 +151,7 @@ class Helper():
         # print("Reconstructed circuit from updated instruction stream: ",'\n')
         # print(circ.to_circuit())
         # print("Reconstructed circuit depth = ", circ.to_circuit().depth())
-        return instruction_stream
+        return instruction_stream_indexed
 
     def _remove_self_inverses(self, sequence):
         new_seq = GateSequence()

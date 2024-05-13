@@ -16,14 +16,16 @@
 # qiskit.synthesis.discrete_basis.generate_basis_approximations
 # Also, uses other qiskit dependencies
 ########################################################################################################################
-
+## UTILITIES
 import collections
 import numpy as np
 import scipy
 
+## QISKIT DEPENDENCIES
 from qiskit.circuit.gate import Gate
 from qiskit.quantum_info import random_unitary
-from qiskit.extensions import UnitaryGate
+# from qiskit.extensions import UnitaryGate
+from qiskit.circuit.library import UnitaryGate
 from qiskit.utils import optionals
 from qiskit.synthesis.discrete_basis.gate_sequence import GateSequence
 from qiskit.synthesis.discrete_basis.commutator_decompose import commutator_decompose
@@ -201,6 +203,20 @@ def define_gateset(gate_seq):
                 U = np.array(random_unitary(2), dtype=complex)
                 # U = np.array([[-0.19189903-0.6662916j, -0.6723752-0.25911744j],
                 #               [0.09379103+0.71444629j, -0.60250642-0.34315558j]], dtype=complex)
+            case 'p1a':
+                # from 200 Harr Random Unitaries
+                U = np.array([[-0.78687181 - 5.68121785e-10j, -0.04577325 - 6.15416573e-01j],
+                              [0.03316088 - 6.16224882e-01j, -0.7867068 + 1.61139095e-02j]], dtype=complex)
+                # from 500 Harr Random Unitaries
+                # U = np.array([[-0.99891178+9.50292836e-11j, -0.01683013-4.34972301e-02j],
+                #                      [-0.0406026+2.29497486e-02j, 0.7722138+6.33648623e-01j]], dtype=complex)
+            case 'p1b':
+                # from 200 Harr Random Unitaries
+                U = np.array([[0.8915669 - 1.45226897e-10j, 0.22308591 - 3.94133409e-01j],
+                              [0.24090997 - 3.83498180e-01j, 0.42340431 + 7.84614761e-01j]], dtype=complex)
+                # from 500 Harr Random Unitaries
+                # U = np.array([[-0.54683177 + 0j, -0.52979855 - 0.64829662j],
+                #               [0.8231603 + 0.15291220j, 0.26287606 + 0.47950095j]], dtype=complex)
             case _:
                 print("Invalid Gate Set Configuration")
                 exit()
@@ -229,3 +245,20 @@ def skt_gs(gs):
 def prep_gateset(gateset, depth):
     gs, gs_gates, gtst = define_gateset(gateset)
     return generate_basic_approximations(basis_gates=skt_gs(gs), depth=depth)
+
+
+def identify_gates(gateset):
+    _1q_gate = []
+    _2q_gate = []
+    for gate in gateset:
+        match gate:
+            case 'cx':
+                _2q_gate.append(gate)
+            case 'cz':
+                _2q_gate.append(gate)
+            case 'swap':
+                _2q_gate.append(gate)
+            case _:
+                _1q_gate.append(gate)
+
+    return _1q_gate, _2q_gate
