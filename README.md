@@ -1,5 +1,5 @@
-# QART
-Quantum Algorithmic Resource Theory
+# EQISA
+Energy-efficient Quantum Instruction Set Architecture
 
 M.Sc. thesis code repository for Sibasish Mishra
 
