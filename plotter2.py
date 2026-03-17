@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
-from matplotlib.ticker import LogFormatter, LogLocator
+from matplotlib.ticker import LogFormatter, LogLocator, LogFormatterMathtext
 import numpy as np
 import pandas as pd
 import csv
 
+plt.rcParams.update(
+    {"text.usetex": True, "font.family": "serif", "font.size": 14}
+)
 
 class Plotter:
 
@@ -72,7 +75,7 @@ class Plotter:
         plt.ylabel("Fidelity of Decomposition", fontsize=24, labelpad=15)
         plt.legend(loc='best', fontsize=14)
         # plt.title("Mean Fidelity vs Depth for 200 "+str(dim)+"-qubit unitaries", fontsize=14)
-        plt.savefig('Plots/15.04.2024/fid_depth_' + str(dim) + 'q.png')
+        plt.savefig('Plots/article/fid_depth_' + str(dim) + 'q.png')
         plt.show()
 
     def plot_circ_depth_recur(self, dim):
@@ -102,7 +105,7 @@ class Plotter:
         plt.ylabel("Circuit Depth (in 1000s)", fontsize=24, labelpad=15)
         plt.legend(loc='best', fontsize=14)
         # plt.title("Mean Circuit Depth vs Degree of Recursion for 200 "+str(dim)+"-qubit unitaries", fontsize=14)
-        plt.savefig('Plots/16.04.2024/cd_recur_' + str(dim) + 'q.png')
+        plt.savefig('Plots/article/cd_recur_' + str(dim) + 'q.png')
         plt.show()
 
     def plot_circ_depth_depth(self, dim):
@@ -128,7 +131,7 @@ class Plotter:
         plt.ylabel("Circuit Depth (in 1000s)", fontsize=24, labelpad=15)
         plt.legend(loc='best', fontsize=14)
         # plt.title("Mean Circuit Depth vs Depth of SK Basis for 200 "+str(dim)+"-qubit unitaries", fontsize=14)
-        plt.savefig('Plots/16.04.2024/cd_depth_' + str(dim) + 'q.png')
+        plt.savefig('Plots/article/cd_depth_' + str(dim) + 'q.png')
         plt.show()
 
     def plot_fid_recur(self, dim):
@@ -159,7 +162,7 @@ class Plotter:
         plt.ylabel("Fidelity of Decomposition", fontsize=24, labelpad=15)
         # plt.title("Mean Fidelity vs Degree of Recursion for 200 "+str(dim)+"-qubit unitaries", fontsize=14)
         plt.legend(loc='best', fontsize=14)
-        plt.savefig('Plots/15.04.2024/fid_recur_' + str(dim) + 'q.png')
+        plt.savefig('Plots/article/fid_recur_' + str(dim) + 'q.png')
         plt.show()
 
     def plot_length_comparison(self, dim):
@@ -275,7 +278,7 @@ class Plotter:
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=14)
         # plt.legend(loc='right', fontsize=14)
-        plt.savefig('Plots/30.04.2024/cr_random_' + str(dim) + 'q.png', dpi=400)
+        plt.savefig('Plots/article/cr_random_' + str(dim) + 'q.png', dpi=400)
         plt.show()
 # , ms=2, mfc='black', mec='black'
 
@@ -430,42 +433,42 @@ class Plotter:
         ax.tick_params(axis='both', which='major', labelsize=14)
         fig.subplots_adjust(bottom=0.15, left=0.3, right=0.95)
         # Setting positions for the bars
-        bar_width = 0.15
+        bar_width = 0.12
         # index = np.arange(len(sizes)) * (len(columns) + 2) * bar_width  # Maintain original spacing between different sizes
         index = np.arange(len(sizes))
         # print(index)
 
-        labels = ["QASM", "v0: binary encoded", "Huff v1", "Huff v2", "Huff v3"]
+        labels = ["QASM", "Binary v0", "Huffman v1", "Huffman v2", "Huffman v3"]
         colors = ['#0047AB', '#097969', '#808080', '#E97451', '#9F2B68']
         colors2 = ['#6495ED', '#50C878', '#C0C0C0', '#E5AA70', '#DA70D6']
         # Plot first set of columns
         for i, col in enumerate(columns):
             means_col = [mean[col] for mean in means1]
             std_devs_col = [std[col] for std in std_devs1]
-            adjusted_index = index + i * 0.04  # 0.03 is the gap between bars of the same size
+            adjusted_index = -0.1 + index + i * 0.05  # 0.03 is the gap between bars of the same size
             ax.bar(adjusted_index + i * bar_width, means_col, bar_width, yerr=std_devs_col,
                    capsize=2, label=labels[i % len(labels)], alpha=0.9, edgecolor='black', color=colors[i % len(colors)])
 
         # Hatches for second set of bars
         hatches = ['/', '\\', "O", ".", "o"]
-        overlay_offset = 0.02
-        labels = ["bz2 on QASM", "bz2 on v0: binary", "bz2 on Huff v1", "bz2 on Huff v2", "bz2 on Huff v3"]
+        overlay_offset = 0.03
+        labels = ["bzip2 on QASM", "bzip2 on v0: binary", "bzip2 on Huffman v1", "bzip2 on Huffman v2", "bzip2 on Huffman v3"]
         # Plot second set of columns superimposed with lower alpha
         for i, col in enumerate(bz2_columns):
             means_col = [mean[col] for mean in means2]
             std_devs_col = [std[col] for std in std_devs2]
-            adjusted_index = index + overlay_offset + i * bar_width + i * 0.04  # Applying the same gap adjustment
+            adjusted_index = -0.1 + index + overlay_offset + i * bar_width + i * 0.05  # Applying the same gap adjustment
             ax.bar(adjusted_index, means_col, bar_width, yerr=std_devs_col, capsize=2,
                    label=labels[i % len(labels)], alpha=0.9, hatch=hatches[i % len(hatches)], edgecolor='black', color=colors2[i % len(colors2)])
 
         # Set the y-axis to a logarithmic scale with base 2
         ax.set_yscale('log', base=2)
-        ax.get_yaxis().set_major_formatter(LogFormatter(base=2))
+        ax.get_yaxis().set_major_formatter(LogFormatterMathtext(base=2))
         ax.get_yaxis().set_major_locator(LogLocator(base=2))
 
         # Adding labels and title
-        ax.set_xlabel('System Size', fontsize=24, labelpad=15)
-        ax.set_ylabel('Program Size (in megabits)', fontsize=24, labelpad=15)
+        ax.set_xlabel('Size of Benchmark Quantum Circuits (in qubits)', fontsize=24, labelpad=15)
+        ax.set_ylabel('Average Program Size (in megabits)', fontsize=24, labelpad=15)
         # ax.set_title('Average and Standard Deviation of Program Sizes for Random Circuits by System Size (log2 scale)')
         ax.set_xticks(index + bar_width * (len(columns) - 1) / 2)
         ax.set_xticklabels([str(size) for size in sizes])
@@ -473,7 +476,7 @@ class Plotter:
 
         # Show the plot
         plt.tight_layout()
-        plt.savefig('Plots/02.05.2024/program_sizes_bench.png', dpi=400)
+        plt.savefig('Plots/article/program_sizes_bench.pdf', dpi=400)
         plt.show()
 
 
@@ -531,22 +534,190 @@ class Plotter:
         ax.set_ylabel('Compression Factor', fontsize=24, labelpad=15)
         ax.legend(loc='best', fontsize=14)
         plt.tight_layout()
-        plt.savefig('Plots/29.04.2024/correl_cr.png', dpi=400)
+        plt.savefig('Plots/article/correl_cr.png', dpi=400)
+        plt.show()
+
+    def plot_energies(self):
+        df = pd.read_csv('records/benchmarks/benchmark_new_huff.csv', delimiter=';')
+
+        # Group by 'size' and calculate the mean for each size
+        grouped = df.groupby('size')[['sumbits_qasm', 'sumbits binary', 'sumbits huff3', 'sumbits bz2+huff3']].mean()
+
+        # Plotting
+        fig, ax = plt.subplots(figsize=(10, 7))
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        fig.subplots_adjust(bottom=0.15, left=0.15, top=0.9, right=0.95)
+        # Width of the bar
+        bar_width = 0.35
+        offset = 0.2
+        # Locations for the bars on the x-axis
+        indices = range(len(grouped))
+        # Opacity for overlapping bars
+        opacity = 1.0
+
+        # Plot each column
+        bar1 = ax.bar([x-offset for x in indices], grouped['sumbits_qasm'] * (2.46e-9), width=bar_width, alpha=opacity, label='QASM',
+                      color='#0047AB', hatch=None, zorder=1, edgecolor='black')
+        # bar1 = ax.bar([x - offset for x in indices], grouped['sumbits_qasm'] * (2.46e-9), width=bar_width, label='QASM',
+        #               alpha=opacity, color='none', zorder=2, edgecolor='k')
+        bar2 = ax.bar([x-offset/3 for x in indices], grouped['sumbits binary'] * (2.46e-9), width=bar_width, alpha=opacity, label='Binary v0',
+                      color='#097969', hatch=None, zorder=3, edgecolor='black')
+        bar3 = ax.bar([x+offset/3 for x in indices], grouped['sumbits huff3']* (2.46e-9), width=bar_width, alpha=opacity, label='Huffman v3',
+                      color='#9F2B68', hatch=None, zorder=4, edgecolor='black')
+        bar4 = ax.bar([x+offset for x in indices], grouped['sumbits bz2+huff3']* (2.46e-9), width=bar_width, alpha=opacity, label='bzip2 on Huffman v3',
+                      color='#DA70D6', hatch='o', zorder=5, edgecolor='black')
+
+        # Add labels, title and axes ticks
+        ax.set_xlabel('Size of Benchmark Quantum Circuits (in qubits)', fontsize=24, labelpad=15)
+        ax.set_ylabel('Average Program Energy (in mJ)', fontsize=24, labelpad=15)
+        # ax.set_title('Mean Values of benchmark Samples by Size')
+        ax.set_xticks(indices)
+        ax.set_xticklabels([str(i) for i in indices])
+        ax.set_yscale('log')
+        ax.set_axisbelow(True)
+        ax.grid(True, which='major', axis='y', linestyle='--', linewidth=0.5,
+                alpha=0.7, zorder=0)  # Light gridlines for fidelity
+        ax.set_xticklabels(grouped.index)
+
+        offset_factor = 0.5  # Adjust offset factor as needed for better visibility
+        # Annotations for percentage calculations
+        heights_qasm = grouped['sumbits_qasm'].values
+        heights_bin = grouped['sumbits binary'].values
+        heights_huff3 = grouped['sumbits huff3'].values
+        heights_bz2_huff3 = grouped['sumbits bz2+huff3'].values
+        p1 = []
+        p2 = []
+        p3 = []
+        for i, (hq, hb, hh3, hbz2h3) in enumerate(zip(heights_qasm, heights_bin, heights_huff3, heights_bz2_huff3)):
+            percentage_huff3 = (hh3 / hq) * 100
+            percentage_bz2h3 = (hbz2h3 / hq) * 100
+            percentage_hbin = (hh3 / hb) * 100
+            p1.append(percentage_huff3)
+            p2.append(percentage_bz2h3)
+            p3.append(percentage_hbin)
+            plt.text(i, hh3 + offset_factor, f'{percentage_huff3:.1f}%', ha='center', va='top', color='white', fontsize=9)
+            plt.text(i, hbz2h3 + offset_factor, f'{percentage_bz2h3:.1f}%', ha='center', va='top', color='white', fontsize=9)
+        print("Average improvement in Huffman v3:", np.average(p1))
+        print("Average improvement in Huffman v3 over binary:", np.average(p3))
+        print("Average improvement in bzip2 + Huffman v3:", np.average(p2))
+        # Add a legend
+        ax.legend(fontsize=14)
+
+        # Show the plot
+        plt.tight_layout()
+        plt.savefig('Plots/article/program_energies_3.pdf', dpi=400)
+        plt.show()
+
+    def plot_tot_complexity(self):
+        direc = 'records/benchmarks/bench_new_huffq.csv'
+        d = 'records/benchmarks/benchmark_new_huff.csv'
+        # direc2 = 'records/random_trend/huff_records_q.csv'
+        df1 = pd.read_csv(direc, delimiter=';')
+        dfoo = pd.read_csv(d, delimiter=';')
+        # df2 = pd.read_csv(direc2, delimiter=';')
+        # sizes = range(2, 7)
+        # print(df1)
+        # exit()
+        # print(df1.columns)
+        # print(dfoo.columns)
+        # exit()
+        # df1 = df1.sort_values(['size','sumbits_bz2_qasm'])
+        df1 = df1.sort_values(['size','circ_depth'])
+        # dfoo = dfoo.sort_values(['size','sumbits_bz2_qasm'])
+        dfoo = dfoo.sort_values(['size','circ_depth'])
+
+        # Initialize a dictionary to store dataframes for each size
+        size_dfs1 = {}
+        size_dfs2 = {}
+
+        x_arr = []
+        for bench in dfoo['benchmark']:
+            temp = bench.replace('_indep_qiskit', '')
+            x_arr.append(temp)
+
+        # Split the dataframe based on the 'size' column
+        # for size in sizes:
+        #     size_dfs1[size] = df1[df1['size'] == size]
+        #     size_dfs2[size] = df2[df2['size'] == size]
+        print(dfoo['size'])
+        print(dfoo['circ_depth'])
+        circ_complexities = dfoo['size'] * dfoo['circ_depth']
+        descrip_complexities = dfoo['sumbits bz2+huff3']
+        # circ_arr = df2['size'].astype(str) + 'q_' + df2["number"].astype(str)
+
+        fig, ax = plt.subplots(figsize=(18, 9))
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        fig.subplots_adjust(bottom=0.35, left=0.075, top=0.8, right=0.95)
+        plt.plot(x_arr, circ_complexities, label='Circuit Complexity', color="#0b655f", marker='v', alpha=0.6)  # blue
+        plt.plot(x_arr, descrip_complexities, label='Description Complexity', color="#9f2b68", marker='^', alpha=0.6)  # purple
+        # plt.plot(circ_arr, circ_complexities+descrip_complexities, label='Total Complexity')
+        ax.set_yscale('log')
+        ax.grid(True, which='major', axis='x', linestyle='--', linewidth=0.5,
+                 alpha=0.7)  # Light gridlines for fidelity
+        plt.xlabel('Benchmark name', fontsize=24, labelpad=15)
+        plt.xticks(range(len(x_arr)), x_arr)  # Assuming x_arr contains the labels for x-axis
+        plt.gca().margins(x=0.001)  # Adjusting the margins to avoid cutting off the labels
+        plt.gcf().canvas.draw()
+        plt.xticks(rotation=90)
+        plt.ylabel('Complexity', fontsize=24, labelpad=15)
+        plt.legend(loc='best', fontsize=14)
+        plt.savefig('Plots/article/complexities_bench_2.pdf', dpi=400)
         plt.show()
 
 
+    def plot_cr(self):
+        folder = 'records/benchmarks/'
+        # filename = 'benchmarks_huff_records.csv'
+        # filename = 'bench_new_huffq.csv'
+        filename = 'benchmark_new_huff.csv'
+        read = pd.read_csv(folder + filename, delimiter=';')
+        # read = read.sort_values('size')
+        read = read.sort_values(['size','circ_depth'])
+        x_arr = []
+        for bench in read['benchmark']:
+            temp = bench.replace('_indep_qiskit', '')
+            x_arr.append(temp)
+        # plt.figure(figsize=(14, 8))
+        fig, ax = plt.subplots(figsize=(17, 9))
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        fig.subplots_adjust(bottom=0.35, left=0.1, top=0.8, right=0.95)
+
+        
+
+        labels = ["QASM", "Binary v0", "Huffman v1", "Huffman v2", "Huffman v3"]
+        colors = ['#0047AB', '#097969', '#808080', '#E97451', '#9F2B68']
+
+        plt.axhline(y=1.0, linestyle='--', linewidth=2, label='Binary v0', color=colors[1])
+        plt.plot(x_arr, read['cr huff1'], marker='o', ms=2, label='Huffman v1', alpha=0.7, color=colors[2])
+        plt.plot(x_arr, read['cr huff2'], marker='o', ms=2, label='Huffman v2', alpha=0.7, color=colors[3])
+        plt.plot(x_arr, read['cr huff3'], marker='o', ms=2, label='Huffman v3', alpha=0.7, color=colors[4])
+        plt.xlabel("Benchmark name", fontsize=24, labelpad=15)
+        plt.ylabel(r'Compression Factor', fontsize=24, labelpad=15)
+        plt.legend(loc='best', fontsize=14)
+
+        plt.xticks(range(len(x_arr)), x_arr)  # Assuming x_arr contains the labels for x-axis
+        plt.gca().margins(x=0.001)  # Adjusting the margins to avoid cutting off the labels
+        plt.gcf().canvas.draw()
+        plt.xticks(rotation=90)
+        # plt.title("Compression Factor for Benchmark Circuits with sizes 2 to 6", fontsize=24)
+        plt.savefig('Plots/article/cr_bench_ordered.pdf', dpi=400)
+        plt.show()
+
 pl = Plotter()
-# pl.plot_cr_comparison(2)
-# pl.plot_length_comparison(2)
-# pl.plot_fid_depth(3)
-# pl.plot_fid_recur(1)
-# pl.plot_circ_depth_recur(1)
-# pl.plot_circ_depth_depth(1)
+# pl.plot_cr_comparison(2) # not in article
+# pl.plot_length_comparison(2) # not in article
+# pl.plot_fid_depth(3) # not in article
+# pl.plot_fid_recur(1) # not in article
+# pl.plot_circ_depth_recur(1) # not in article
+# pl.plot_circ_depth_depth(1) # not in article
 # pl.calc_plot_avg(1)
 # pl.plot_avg_cr()
 # pl.plot_avg_cr_bench()
-pl.plot_program_size()
+# pl.plot_program_size()
 # pl.plot_cr_all()
+# pl.plot_energies()
+# pl.plot_tot_complexity()
+pl.plot_cr()
 """
 For degree of recursion =  1 Avg. Fidelity =  0.10846959350371296
 For degree of recursion =  2 Avg. Fidelity =  0.22235182097107997
